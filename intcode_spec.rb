@@ -43,4 +43,11 @@ describe Intcode do
     subject = Intcode.new(memory)
     expect(subject.run.first).to eq 4576384
   end
+
+  it 'supports input and output' do
+    memory = [3, 0, 4, 0, 99]
+    subject = Intcode.new(memory, input: [25])
+    subject.run
+    expect(subject.output).to eq [25]
+  end
 end

@@ -1,7 +1,11 @@
 class Intcode
-  def initialize(memory)
+  attr_reader :output
+
+  def initialize(memory, input: [])
     @memory = memory.dup
     @pointer = 0
+    @input = input.dup
+    @output = []
   end
 
   def run
@@ -10,11 +14,13 @@ class Intcode
 
       case @memory[@pointer]
       when 1
-        add!
-        @pointer += 4
+        add
       when 2
-        multiply!
-        @pointer += 4
+        multiply
+      when 3
+        use_input
+      when 4
+        append_output
       else
         raise ArgumentError, 'unexpected opcode'
       end
@@ -23,15 +29,15 @@ class Intcode
 
   private
 
-  def add!
-    operate! { |a, b| a + b }
+  def add
+    operate { |a, b| a + b }
   end
 
-  def multiply!
-    operate! { |a, b| a * b }
+  def multiply
+    operate { |a, b| a * b }
   end
 
-  def operate!
+  def operate
     read_a_index = @memory[@pointer + 1]
     read_b_index = @memory[@pointer + 2]
     save_at_index = @memory[@pointer + 3]
@@ -39,5 +45,21 @@ class Intcode
     a = @memory[read_a_index]
     b = @memory[read_b_index]
     @memory[save_at_index] = yield a, b
+    @pointer += 4
+  end
+
+  def use_input
+    next_input = @input.shift
+    input_position = @memory[@pointer + 1]
+
+    @memory[input_position] = next_input
+    @pointer += 2
+  end
+
+  def append_output
+    output_position = @memory[@pointer + 1]
+    output_value = @memory[output_position]
+    @output.push(output_value)
+    @pointer += 2
   end
 end
