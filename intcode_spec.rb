@@ -131,4 +131,36 @@ describe Intcode do
       expect(subject.output).to eq [0]
     end
   end
+
+  context 'jump test using position mode' do
+    let(:memory) { [3, 12, 6, 12, 15, 1, 13, 14, 13, 4, 13, 99, -1, 0, 1, 9] }
+
+    it 'outputs 0 if the input was 0' do
+      subject = Intcode.new(memory, input: [0])
+      subject.run
+      expect(subject.output).to eq [0]
+    end
+
+    it 'outputs 1 if the input was non-zero' do
+      subject = Intcode.new(memory, input: [25])
+      subject.run
+      expect(subject.output).to eq [1]
+    end
+  end
+
+  context 'jump test using immediate mode' do
+    let(:memory) { [3, 3, 1105, -1, 9, 1101, 0, 0, 12, 4, 12, 99, 1] }
+
+    it 'outputs 0 if the input was 0' do
+      subject = Intcode.new(memory, input: [0])
+      subject.run
+      expect(subject.output).to eq [0]
+    end
+
+    it 'outputs 1 if the input was non-zero' do
+      subject = Intcode.new(memory, input: [25])
+      subject.run
+      expect(subject.output).to eq [1]
+    end
+  end
 end

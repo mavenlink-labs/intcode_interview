@@ -22,6 +22,10 @@ class Intcode
         input_instruction meta
       when 4
         output_instruction meta
+      when 5
+        jump_if_true_instruction meta
+      when 6
+        jump_if_false_instruction meta
       when 7
         less_than_instruction meta
       when 8
@@ -105,6 +109,32 @@ class Intcode
     output_value = get_param(meta[:param_1_mode])
     @output.push(output_value)
     advance_pointer
+  end
+
+  def jump_if_true_instruction(meta)
+    comparator = get_param(meta[:param_1_mode])
+
+    if comparator.zero?
+      # advance pointer once to move past param 2
+      advance_pointer
+      # advance it again to move to the next instruction
+      advance_pointer
+    else
+      @pointer = get_param(meta[:param_2_mode])
+    end
+  end
+
+  def jump_if_false_instruction(meta)
+    comparator = get_param(meta[:param_1_mode])
+
+    if comparator.zero?
+      @pointer = get_param(meta[:param_2_mode])
+    else
+      # advance pointer once to move past param 2
+      advance_pointer
+      # advance it again to move to the next instruction
+      advance_pointer
+    end
   end
 
   def advance_pointer
