@@ -6,6 +6,7 @@ class Intcode
     @pointer = 0
     @input = input.dup
     @output = []
+    @relative_base = 0
   end
 
   def run
@@ -30,6 +31,8 @@ class Intcode
         less_than_instruction meta
       when 8
         equals_instruction meta
+      when 9
+        adjust_relative_base_instruction meta
       else
         raise ArgumentError, "unexpected opcode #{meta[:opcode]}"
       end
@@ -75,12 +78,16 @@ class Intcode
 
   def get_param(mode)
     advance_pointer
+
     case mode
     when 0
       index = @memory[@pointer]
       @memory[index]
     when 1
       @memory[@pointer]
+    when 2
+      parameter = @memory[@pointer]
+      @memory[@relative_base + parameter]
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -94,6 +101,8 @@ class Intcode
       @memory[index] = new_value
     when 1
       @memory[@pointer] = new_value
+    when 2
+      @relative_base = new_value
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -130,6 +139,12 @@ class Intcode
       # advance it again to move to the next instruction
       advance_pointer
     end
+  end
+
+  def adjust_relative_base_instruction(meta)
+    adjust_by = get_param(meta[:param_1_mode])
+    @relative_base += adjust_by
+    advance_pointer
   end
 
   def advance_pointer

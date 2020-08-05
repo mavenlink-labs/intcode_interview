@@ -194,4 +194,25 @@ describe Intcode do
       expect(subject.output).to eq [1001]
     end
   end
+
+  it 'can output its own memory' do
+    memory = [101, -5, 5, 5, 4, 5, 101, 6, 5, 5, 1007, 5, 23, 15, 1105, 1, 0, 99]
+    subject = Intcode.new(memory)
+    subject.run
+    expect(subject.output).to eq memory
+  end
+
+  it 'can handle large numbers' do
+    memory = [104, 1125899906842624, 99]
+    subject = Intcode.new(memory)
+    subject.run
+    expect(subject.output).to eq [1125899906842624]
+  end
+
+  it 'can handle complex multiplication' do
+    memory = [1102,34915192,34915192,7,4,7,99,0]
+    subject = Intcode.new(memory)
+    subject.run
+    expect(subject.output).to eq [1219070632396864]
+  end
 end
