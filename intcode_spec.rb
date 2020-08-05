@@ -50,4 +50,10 @@ describe Intcode do
     subject.run
     expect(subject.output).to eq [25]
   end
+
+  it 'supports parameter mode immediate' do
+    memory = [1002, 4, 3, 4, 33]
+    subject = Intcode.new(memory)
+    expect(subject.run).to eq [1002, 4, 3, 4, 99]
+  end
 end

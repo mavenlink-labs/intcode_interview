@@ -1,5 +1,5 @@
 class Intcode
-  attr_reader :output
+  attr_reader :output, :memory
 
   def initialize(memory, input: [])
     @memory = memory.dup
@@ -63,8 +63,8 @@ class Intcode
     when 0
       index = @memory[@pointer]
       @memory[index]
-    # when 1
-    #   @memory[@pointer]
+    when 1
+      @memory[@pointer]
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -76,8 +76,8 @@ class Intcode
     when 0
       index = @memory[@pointer]
       @memory[index] = new_value
-    # when 1
-    #   @memory[@pointer] = new_value
+    when 1
+      @memory[@pointer] = new_value
     else
       raise ArgumentError, 'unknown parameter mode'
     end
