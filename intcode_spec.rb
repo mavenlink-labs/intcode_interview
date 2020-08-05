@@ -163,4 +163,26 @@ describe Intcode do
       expect(subject.output).to eq [1]
     end
   end
+
+  context 'complex jump and comparison example' do
+    let(:memory) { [3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99] }
+
+    it 'outputs 999 if input below 8' do
+      subject = Intcode.new(memory, input: [1])
+      subject.run
+      expect(subject.output).to eq [999]
+    end
+
+    it 'outputs 1000 if input equal to 8' do
+      subject = Intcode.new(memory, input: [8])
+      subject.run
+      expect(subject.output).to eq [1000]
+    end
+
+    it 'outputs 1001 if input greater than 8' do
+      subject = Intcode.new(memory, input: [99])
+      subject.run
+      expect(subject.output).to eq [1001]
+    end
+  end
 end
