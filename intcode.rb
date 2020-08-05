@@ -34,9 +34,9 @@ class Intcode
     instruction_digits = @memory[@pointer].to_s.rjust(5, '0')
 
     {
-      param_1_mode: instruction_digits[0].to_i,
+      param_3_mode: instruction_digits[0].to_i,
       param_2_mode: instruction_digits[1].to_i,
-      param_3_mode: instruction_digits[2].to_i,
+      param_1_mode: instruction_digits[2].to_i,
       opcode: instruction_digits[3..4].to_i
     }
   end

@@ -56,4 +56,10 @@ describe Intcode do
     subject = Intcode.new(memory)
     expect(subject.run).to eq [1002, 4, 3, 4, 99]
   end
+
+  it 'supports negative numbers' do
+    memory = [1101, 100, -1, 4, 0]
+    subject = Intcode.new(memory)
+    expect(subject.run).to eq [1101, 100, -1, 4, 99]
+  end
 end
