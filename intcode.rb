@@ -72,7 +72,7 @@ class Intcode
     a = get_param(meta[:param_1_mode])
     b = get_param(meta[:param_2_mode])
 
-    set_param(meta[:param_3_mode], yield(a, b))
+    set_memory_for_param(meta[:param_3_mode], yield(a, b))
     advance_pointer
   end
 
@@ -81,13 +81,11 @@ class Intcode
 
     case mode
     when 0
-      index = read_pointer
-      param = read_memory(index)
+      param = read_memory(read_pointer)
     when 1
       param = read_pointer
     when 2
-      parameter = read_pointer
-      param = read_memory(@relative_base + parameter)
+      param = read_memory(@relative_base + read_pointer)
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -95,7 +93,7 @@ class Intcode
     param
   end
 
-  def set_param(mode, new_value)
+  def set_memory_for_param(mode, new_value)
     advance_pointer
     case mode
     when 0
@@ -104,7 +102,7 @@ class Intcode
     when 1
       set_memory(@pointer, new_value)
     when 2
-      @relative_base = new_value
+      set_memory(@relative_base + read_pointer, new_value)
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -114,7 +112,7 @@ class Intcode
     raise StandardError, 'no inputs available!!' if @input.empty?
 
     next_input = @input.shift
-    set_param(meta[:param_1_mode], next_input)
+    set_memory_for_param(meta[:param_1_mode], next_input)
     advance_pointer
   end
 
