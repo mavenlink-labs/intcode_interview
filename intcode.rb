@@ -22,8 +22,10 @@ class Intcode
         input_instruction meta
       when 4
         output_instruction meta
+      when 8
+        equals_instruction meta
       else
-        raise ArgumentError, 'unexpected opcode'
+        raise ArgumentError, "unexpected opcode #{meta[:opcode]}"
       end
     end
   end
@@ -47,6 +49,10 @@ class Intcode
 
   def multiple_instruction(meta)
     operate(meta) { |a, b| a * b }
+  end
+
+  def equals_instruction(meta)
+    operate(meta) { |a, b| a == b ? 1 : 0 }
   end
 
   def operate(meta)

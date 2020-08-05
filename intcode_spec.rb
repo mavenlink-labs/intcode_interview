@@ -71,4 +71,64 @@ describe Intcode do
     expect(output.slice!(-1)).to eq 12428642
     expect(output.all?(&:zero?)).to eq true
   end
+
+  context 'Using position mode, if input is equal to 8 output 1 (if it is) or 0 (if it is not)' do
+    let(:memory) { [3, 9, 8, 9, 10, 9, 4, 9, 99, -1, 8] }
+    it 'is true with input 8' do
+      subject = Intcode.new(memory, input: [8])
+      subject.run
+      expect(subject.output).to eq [1]
+    end
+
+    it 'is false with other input' do
+      subject = Intcode.new(memory, input: [10])
+      subject.run
+      expect(subject.output).to eq [0]
+    end
+  end
+
+  context 'Using position mode, if input is less than 8 output 1 (if it is) or 0 (if it is not)' do
+    let(:memory) { [3, 9, 7, 9, 10, 9, 4, 9, 99, -1, 8] }
+    it 'is true with less than 8' do
+      subject = Intcode.new(memory, input: [3])
+      subject.run
+      expect(subject.output).to eq [1]
+    end
+
+    it 'is false with other input' do
+      subject = Intcode.new(memory, input: [10])
+      subject.run
+      expect(subject.output).to eq [0]
+    end
+  end
+
+  context 'Using immediate mode, if input is equal to 8 output 1 (if it is) or 0 (if it is not)' do
+    let(:memory) { [3, 3, 1108, -1, 8, 3, 4, 3, 99] }
+    it 'is true with input 8' do
+      subject = Intcode.new(memory, input: [8])
+      subject.run
+      expect(subject.output).to eq [1]
+    end
+
+    it 'is false with other input' do
+      subject = Intcode.new(memory, input: [10])
+      subject.run
+      expect(subject.output).to eq [0]
+    end
+  end
+
+  context 'Using immediate mode, if input is less than 8 output 1 (if it is) or 0 (if it is not)' do
+    let(:memory) { [3, 3, 1107, -1, 8, 3, 4, 3, 99] }
+    it 'is true with less than 8' do
+      subject = Intcode.new(memory, input: [3])
+      subject.run
+      expect(subject.output).to eq [1]
+    end
+
+    it 'is false with other input' do
+      subject = Intcode.new(memory, input: [10])
+      subject.run
+      expect(subject.output).to eq [0]
+    end
+  end
 end
