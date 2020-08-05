@@ -22,6 +22,8 @@ class Intcode
         input_instruction meta
       when 4
         output_instruction meta
+      when 7
+        less_than_instruction meta
       when 8
         equals_instruction meta
       else
@@ -53,6 +55,10 @@ class Intcode
 
   def equals_instruction(meta)
     operate(meta) { |a, b| a == b ? 1 : 0 }
+  end
+
+  def less_than_instruction(meta)
+    operate(meta) { |a, b| a < b ? 1 : 0 }
   end
 
   def operate(meta)
