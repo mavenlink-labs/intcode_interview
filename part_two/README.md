@@ -46,6 +46,8 @@ The diagnostic program we will use to calibrate these new codes will start by re
 
 The computer will then perform a series of diagnostic tests confirming that various parts of the Intcode computer, like parameter modes, function correctly. For each test, it will run an **output** instruction indicating how far the result of the test was from the expected value, where `0` means the test was successful. Non-zero outputs mean that a function is not working correctly; check the instructions that were run before the output instruction to see which one failed.
 
-Finally, the program will output a **diagnostic code** and immediately halt. This final output isn't an error; an output followed immediately by a halt means the program finished. If all outputs were zero except the diagnostic code, the diagnostic program ran successfully.
+Finally, the program will output a **diagnostic code** and immediately halt. This final output isn't an error; an output followed immediately by a halt means the program finished. If all outputs were zero except the diagnostic code, the diagnostic program ran successfully. 
 
-After providing `1` to the only input instruction and passing all the tests, **what diagnostic code does the program produce**?
+After providing `1` to the only input instruction and confirming all of non-diagnostic output are `0`, confirm that the final diagnostic code is  `12428642`. 
+
+Congratulations, you have a more dynamic Intcode computer!
