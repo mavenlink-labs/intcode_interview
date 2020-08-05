@@ -1,8 +1,10 @@
+require_relative 'memory'
+
 class Intcode
   attr_reader :output
 
   def initialize(memory, input: [])
-    @memory = memory.dup
+    @memory = Memory.new(memory)
     @pointer = 0
     @input = input.dup
     @output = []
@@ -12,7 +14,7 @@ class Intcode
 
   def run
     loop do
-      return @memory if read_memory(@pointer) == 99
+      return @memory.raw if @memory[@pointer] == 99
 
       opcode = translate_instruction
       case opcode
@@ -43,7 +45,6 @@ class Intcode
   end
 
   JUMP_OPCODES = [5, 6].freeze
-
 
   private
 
@@ -88,11 +89,11 @@ class Intcode
 
     case mode
     when 0
-      param = read_memory(read_pointer)
+      param = @memory[read_pointer]
     when 1
       param = read_pointer
     when 2
-      param = read_memory(@relative_base + read_pointer)
+      param = @memory[@relative_base + read_pointer]
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -105,11 +106,11 @@ class Intcode
     case mode
     when 0
       index = read_pointer
-      set_memory(index, new_value)
+      @memory[index] = new_value
     when 1
-      set_memory(@pointer, new_value)
+      @memory[@pointer] = new_value
     when 2
-      set_memory(@relative_base + read_pointer, new_value)
+      @memory[@relative_base + read_pointer] = new_value
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -159,25 +160,6 @@ class Intcode
   end
 
   def read_pointer
-    read_memory(@pointer)
-  end
-
-  def read_memory(index)
-    reallocate_memory(index) if index >= @memory.length
-
-    value = @memory[index]
-    value
-  end
-
-  def set_memory(index, value)
-    reallocate_memory(index) if index >= @memory.length
-
-    @memory[index] = value
-  end
-
-  def reallocate_memory(next_requested_index)
-    new_length = next_requested_index + 1
-
-    @memory.fill(0, @memory.length..new_length)
+    @memory[@pointer]
   end
 end
