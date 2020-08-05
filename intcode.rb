@@ -14,25 +14,28 @@ class Intcode
         multiply! tape, position
         position += 4
       else
-        raise 'bingus'
+        raise ArgumentError, 'unexpected opcode'
       end
     end
-
   end
 
-  def add!(tape, current_position)
-    read_a_index = tape[current_position + 1]
-    read_b_index = tape[current_position + 2]
-    save_at_index = tape[current_position + 3]
+  private
 
-    tape[save_at_index] = tape[read_a_index] + tape[read_b_index]
+  def add!(tape, current_position)
+    operate!(tape, current_position) { |a, b| a + b }
   end
 
   def multiply!(tape, current_position)
+    operate!(tape, current_position) { |a, b| a * b }
+  end
+
+  def operate!(tape, current_position)
     read_a_index = tape[current_position + 1]
     read_b_index = tape[current_position + 2]
     save_at_index = tape[current_position + 3]
 
-    tape[save_at_index] = tape[read_a_index] * tape[read_b_index]
+    a = tape[read_a_index]
+    b = tape[read_b_index]
+    tape[save_at_index] = yield a, b
   end
 end
