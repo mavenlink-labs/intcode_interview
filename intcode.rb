@@ -1,5 +1,5 @@
 class Intcode
-  attr_reader :output, :memory
+  attr_reader :output
 
   def initialize(memory, input: [])
     @memory = memory.dup
@@ -13,28 +13,28 @@ class Intcode
     loop do
       return @memory if read_memory(@pointer) == 99
 
-      meta = translate_instruction
-      case meta[:opcode]
+      opcode, param_1_mode, param_2_mode, param_3_mode = translate_instruction
+      case opcode
       when 1
-        add_instruction meta
+        add_instruction param_1_mode, param_2_mode, param_3_mode
       when 2
-        multiple_instruction meta
+        multiple_instruction param_1_mode, param_2_mode, param_3_mode
       when 3
-        input_instruction meta
+        input_instruction param_1_mode
       when 4
-        output_instruction meta
+        output_instruction param_1_mode
       when 5
-        jump_if_true_instruction meta
+        jump_if_true_instruction param_1_mode, param_2_mode
       when 6
-        jump_if_false_instruction meta
+        jump_if_false_instruction param_1_mode, param_2_mode
       when 7
-        less_than_instruction meta
+        less_than_instruction param_1_mode, param_2_mode, param_3_mode
       when 8
-        equals_instruction meta
+        equals_instruction param_1_mode, param_2_mode, param_3_mode
       when 9
-        adjust_relative_base_instruction meta
+        adjust_relative_base_instruction param_1_mode
       else
-        raise ArgumentError, "unexpected opcode #{meta[:opcode]}"
+        raise ArgumentError, "unexpected opcode #{opcode}"
       end
     end
   end
@@ -44,35 +44,35 @@ class Intcode
   def translate_instruction
     instruction_digits = read_pointer.to_s.rjust(5, '0')
 
-    {
-      param_3_mode: instruction_digits[0].to_i,
-      param_2_mode: instruction_digits[1].to_i,
-      param_1_mode: instruction_digits[2].to_i,
-      opcode: instruction_digits[3..4].to_i
-    }
+    opcode = instruction_digits[3..4].to_i
+    param_1_mode = instruction_digits[2].to_i
+    param_2_mode = instruction_digits[1].to_i
+    param_3_mode = instruction_digits[0].to_i
+
+    [opcode, param_1_mode, param_2_mode, param_3_mode]
   end
 
-  def add_instruction(meta)
-    operate(meta) { |a, b| a + b }
+  def add_instruction(left, right, answer)
+    operate(left, right, answer) { |a, b| a + b }
   end
 
-  def multiple_instruction(meta)
-    operate(meta) { |a, b| a * b }
+  def multiple_instruction(left, right, answer)
+    operate(left, right, answer) { |a, b| a * b }
   end
 
-  def equals_instruction(meta)
-    operate(meta) { |a, b| a == b ? 1 : 0 }
+  def equals_instruction(left, right, answer)
+    operate(left, right, answer) { |a, b| a == b ? 1 : 0 }
   end
 
-  def less_than_instruction(meta)
-    operate(meta) { |a, b| a < b ? 1 : 0 }
+  def less_than_instruction(left, right, answer)
+    operate(left, right, answer) { |a, b| a < b ? 1 : 0 }
   end
 
-  def operate(meta)
-    a = get_param(meta[:param_1_mode])
-    b = get_param(meta[:param_2_mode])
+  def operate(left, right, answer)
+    a = get_param(left)
+    b = get_param(right)
 
-    set_memory_for_param(meta[:param_3_mode], yield(a, b))
+    set_memory_for_param(answer, yield(a, b))
     advance_pointer
   end
 
@@ -108,33 +108,33 @@ class Intcode
     end
   end
 
-  def input_instruction(meta)
+  def input_instruction(param_mode)
     raise StandardError, 'no inputs available!!' if @input.empty?
 
     next_input = @input.shift
-    set_memory_for_param(meta[:param_1_mode], next_input)
+    set_memory_for_param(param_mode, next_input)
     advance_pointer
   end
 
-  def output_instruction(meta)
-    output_value = get_param(meta[:param_1_mode])
+  def output_instruction(param_mode)
+    output_value = get_param(param_mode)
     @output.push(output_value)
     advance_pointer
   end
 
-  def jump_if_true_instruction(meta)
-    jump_if_instruction(meta) { |v| !v.zero? }
+  def jump_if_true_instruction(value_mode, param_mode)
+    jump_if_instruction(value_mode, param_mode) { |v| !v.zero? }
   end
 
-  def jump_if_false_instruction(meta)
-    jump_if_instruction(meta, &:zero?)
+  def jump_if_false_instruction(value_mode, param_mode)
+    jump_if_instruction(value_mode, param_mode, &:zero?)
   end
 
-  def jump_if_instruction(meta)
-    value = get_param(meta[:param_1_mode])
+  def jump_if_instruction(value_mode, param_mode)
+    value = get_param(value_mode)
 
     if yield value
-      @pointer = get_param(meta[:param_2_mode])
+      @pointer = get_param(param_mode)
     else
       # advance pointer once to move past param 2
       advance_pointer
@@ -143,8 +143,8 @@ class Intcode
     end
   end
 
-  def adjust_relative_base_instruction(meta)
-    adjust_by = get_param(meta[:param_1_mode])
+  def adjust_relative_base_instruction(param_mode)
+    adjust_by = get_param(param_mode)
     @relative_base += adjust_by
     advance_pointer
   end
@@ -173,6 +173,6 @@ class Intcode
   def reallocate_memory(next_requested_index)
     new_length = next_requested_index + 1
 
-    @memory.fill(0, memory.length..new_length)
+    @memory.fill(0, @memory.length..new_length)
   end
 end
