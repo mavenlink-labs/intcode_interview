@@ -1,5 +1,5 @@
 ### Part One: Logic
-###### Adapted from Advent of Code 2019, day five, part Two.
+###### Adapted from Advent of Code 2019, day five, part two.
 
 It's time to add some **jumps** and **comparison operators**.
 
