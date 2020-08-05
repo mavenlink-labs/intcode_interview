@@ -13,4 +13,10 @@ describe Intcode do
     subject = Intcode.new
     expect(subject.read_tape(tape)).to eq [2, 0, 0, 0, 99]
   end
+
+  it 'can multiply numbers' do
+    tape = [2, 3, 0, 3, 99]
+    subject = Intcode.new
+    expect(subject.read_tape(tape)).to eq [2, 3, 0, 6, 99]
+  end
 end
