@@ -112,22 +112,17 @@ class Intcode
   end
 
   def jump_if_true_instruction(meta)
-    comparator = get_param(meta[:param_1_mode])
-
-    if comparator.zero?
-      # advance pointer once to move past param 2
-      advance_pointer
-      # advance it again to move to the next instruction
-      advance_pointer
-    else
-      @pointer = get_param(meta[:param_2_mode])
-    end
+    jump_if_instruction(meta) { |v| !v.zero? }
   end
 
   def jump_if_false_instruction(meta)
-    comparator = get_param(meta[:param_1_mode])
+    jump_if_instruction(meta, &:zero?)
+  end
 
-    if comparator.zero?
+  def jump_if_instruction(meta)
+    value = get_param(meta[:param_1_mode])
+
+    if yield value
       @pointer = get_param(meta[:param_2_mode])
     else
       # advance pointer once to move past param 2
