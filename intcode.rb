@@ -11,7 +11,7 @@ class Intcode
 
   def run
     loop do
-      return @memory if @memory[@pointer] == 99
+      return @memory if read_memory(@pointer) == 99
 
       meta = translate_instruction
       case meta[:opcode]
@@ -42,7 +42,7 @@ class Intcode
   private
 
   def translate_instruction
-    instruction_digits = @memory[@pointer].to_s.rjust(5, '0')
+    instruction_digits = read_pointer.to_s.rjust(5, '0')
 
     {
       param_3_mode: instruction_digits[0].to_i,
@@ -81,26 +81,28 @@ class Intcode
 
     case mode
     when 0
-      index = @memory[@pointer]
-      @memory[index]
+      index = read_pointer
+      param = read_memory(index)
     when 1
-      @memory[@pointer]
+      param = read_pointer
     when 2
-      parameter = @memory[@pointer]
-      @memory[@relative_base + parameter]
+      parameter = read_pointer
+      param = read_memory(@relative_base + parameter)
     else
       raise ArgumentError, 'unknown parameter mode'
     end
+
+    param
   end
 
   def set_param(mode, new_value)
     advance_pointer
     case mode
     when 0
-      index = @memory[@pointer]
-      @memory[index] = new_value
+      index = read_pointer
+      set_memory(index, new_value)
     when 1
-      @memory[@pointer] = new_value
+      set_memory(@pointer, new_value)
     when 2
       @relative_base = new_value
     else
@@ -109,6 +111,8 @@ class Intcode
   end
 
   def input_instruction(meta)
+    raise StandardError, 'no inputs available!!' if @input.empty?
+
     next_input = @input.shift
     set_param(meta[:param_1_mode], next_input)
     advance_pointer
@@ -149,5 +153,28 @@ class Intcode
 
   def advance_pointer
     @pointer += 1
+  end
+
+  def read_pointer
+    read_memory(@pointer)
+  end
+
+  def read_memory(index)
+    reallocate_memory(index) if index >= @memory.length
+
+    value = @memory[index]
+    value
+  end
+
+  def set_memory(index, value)
+    reallocate_memory(index) if index >= @memory.length
+
+    @memory[index] = value
+  end
+
+  def reallocate_memory(next_requested_index)
+    new_length = next_requested_index + 1
+
+    @memory.fill(0, memory.length..new_length)
   end
 end
