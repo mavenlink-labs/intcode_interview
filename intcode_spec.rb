@@ -26,6 +26,10 @@ describe Intcode do
   it 'can do it all, my man' do
     tape = [1, 1, 1, 4, 99, 5, 6, 0, 99]
     expect(subject.read_tape(tape)).to eq [30, 1, 1, 4, 2, 5, 6, 0, 99]
+  end
 
+  it 'raises if the tape has an invalid opcode' do
+    tape = [78, 0, 0, 0, 99]
+    expect { subject.read_tape(tape) }.to raise_error(ArgumentError, /unexpected opcode/)
   end
 end
