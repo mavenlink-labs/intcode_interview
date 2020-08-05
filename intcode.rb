@@ -1,20 +1,20 @@
 class Intcode
   def initialize(memory)
     @memory = memory.dup
+    @pointer = 0
   end
 
   def run
-    position = 0
     loop do
-      return @memory if @memory[position] == 99
+      return @memory if @memory[@pointer] == 99
 
-      case @memory[position]
+      case @memory[@pointer]
       when 1
-        add! position
-        position += 4
+        add!
+        @pointer += 4
       when 2
-        multiply! position
-        position += 4
+        multiply!
+        @pointer += 4
       else
         raise ArgumentError, 'unexpected opcode'
       end
@@ -23,18 +23,18 @@ class Intcode
 
   private
 
-  def add!(current_position)
-    operate!(current_position) { |a, b| a + b }
+  def add!
+    operate! { |a, b| a + b }
   end
 
-  def multiply!(current_position)
-    operate!(current_position) { |a, b| a * b }
+  def multiply!
+    operate! { |a, b| a * b }
   end
 
-  def operate!(current_position)
-    read_a_index = @memory[current_position + 1]
-    read_b_index = @memory[current_position + 2]
-    save_at_index = @memory[current_position + 3]
+  def operate!
+    read_a_index = @memory[@pointer + 1]
+    read_b_index = @memory[@pointer + 2]
+    save_at_index = @memory[@pointer + 3]
 
     a = @memory[read_a_index]
     b = @memory[read_b_index]
