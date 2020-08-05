@@ -48,6 +48,6 @@ The computer will then perform a series of diagnostic tests confirming that vari
 
 Finally, the program will output a **diagnostic code** and immediately halt. This final output isn't an error; an output followed immediately by a halt means the program finished. If all outputs were zero except the diagnostic code, the diagnostic program ran successfully. 
 
-After providing `1` to the only input instruction and confirming all of non-diagnostic output are `0`, confirm that the final diagnostic code is  `12428642`. 
+Provide the computer with the memory in the `memory` file of this directory. For this diagnostic test, provide `1` to the only **input** instruction, then ensure that all codes in the **output** are zero except for the final element in the output, and confirm that the final element in the output is the diagnostic code `12428642`.
 
 Congratulations, you have a more dynamic Intcode computer!

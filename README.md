@@ -1,6 +1,6 @@
 ## Adapted from the 2019 Advent of Code
 
-This interview is a slightly adapted version of the [2019 Advent of Code event](https://adventofcode.com/2019/). It focuses on the Intcode computer iterations and uses a specific input/expected values set.
+This interview is a slightly adapted version of the [2019 Advent of Code event](https://adventofcode.com/2019/). It focuses on the Intcode computer iterations and uses a specific memory/expected values set.
 
 Several portions of the Advent of Code design are skipped (as well as the fluff and lore around it being Christmas and rocket-ship themed), leaving behind mostly the crunchy implementation details.
 
