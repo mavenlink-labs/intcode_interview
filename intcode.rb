@@ -7,32 +7,33 @@ class Intcode
     @input = input.dup
     @output = []
     @relative_base = 0
+    @instruction_params = []
   end
 
   def run
     loop do
       return @memory if read_memory(@pointer) == 99
 
-      opcode, param_1_mode, param_2_mode, param_3_mode = translate_instruction
+      opcode = translate_instruction
       case opcode
       when 1
-        add_instruction param_1_mode, param_2_mode, param_3_mode
+        add_instruction
       when 2
-        multiple_instruction param_1_mode, param_2_mode, param_3_mode
+        multiple_instruction
       when 3
-        input_instruction param_1_mode
+        input_instruction
       when 4
-        output_instruction param_1_mode
+        output_instruction
       when 5
-        jump_if_true_instruction param_1_mode, param_2_mode
+        jump_if_true_instruction
       when 6
-        jump_if_false_instruction param_1_mode, param_2_mode
+        jump_if_false_instruction
       when 7
-        less_than_instruction param_1_mode, param_2_mode, param_3_mode
+        less_than_instruction
       when 8
-        equals_instruction param_1_mode, param_2_mode, param_3_mode
+        equals_instruction
       when 9
-        adjust_relative_base_instruction param_1_mode
+        adjust_relative_base_instruction
       else
         raise ArgumentError, "unexpected opcode #{opcode}"
       end
@@ -49,26 +50,28 @@ class Intcode
     param_2_mode = instruction_digits[1].to_i
     param_3_mode = instruction_digits[0].to_i
 
-    [opcode, param_1_mode, param_2_mode, param_3_mode]
+    @instruction_params = [param_1_mode, param_2_mode, param_3_mode]
+    opcode
   end
 
-  def add_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a + b }
+  def add_instruction
+    operate { |a, b| a + b }
   end
 
-  def multiple_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a * b }
+  def multiple_instruction
+    operate { |a, b| a * b }
   end
 
-  def equals_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a == b ? 1 : 0 }
+  def equals_instruction
+    operate { |a, b| a == b ? 1 : 0 }
   end
 
-  def less_than_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a < b ? 1 : 0 }
+  def less_than_instruction
+    operate { |a, b| a < b ? 1 : 0 }
   end
 
-  def operate(left, right, answer)
+  def operate
+    left, right, answer = @instruction_params
     a = get_param(left)
     b = get_param(right)
 
@@ -108,29 +111,30 @@ class Intcode
     end
   end
 
-  def input_instruction(param_mode)
+  def input_instruction
     raise StandardError, 'no inputs available!!' if @input.empty?
 
     next_input = @input.shift
-    set_memory_for_param(param_mode, next_input)
+    set_memory_for_param(@instruction_params.first, next_input)
     advance_pointer
   end
 
-  def output_instruction(param_mode)
-    output_value = get_param(param_mode)
+  def output_instruction
+    output_value = get_param(@instruction_params.first)
     @output.push(output_value)
     advance_pointer
   end
 
-  def jump_if_true_instruction(value_mode, param_mode)
-    jump_if_instruction(value_mode, param_mode) { |v| !v.zero? }
+  def jump_if_true_instruction
+    jump_if_instruction { |v| !v.zero? }
   end
 
-  def jump_if_false_instruction(value_mode, param_mode)
-    jump_if_instruction(value_mode, param_mode, &:zero?)
+  def jump_if_false_instruction
+    jump_if_instruction(&:zero?)
   end
 
-  def jump_if_instruction(value_mode, param_mode)
+  def jump_if_instruction
+    value_mode, param_mode = @instruction_params
     value = get_param(value_mode)
 
     if yield value
@@ -143,8 +147,8 @@ class Intcode
     end
   end
 
-  def adjust_relative_base_instruction(param_mode)
-    adjust_by = get_param(param_mode)
+  def adjust_relative_base_instruction
+    adjust_by = get_param(@instruction_params.first)
     @relative_base += adjust_by
     advance_pointer
   end

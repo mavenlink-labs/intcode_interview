@@ -231,6 +231,6 @@ describe Intcode do
     expect do
       subject = Intcode.new(memory, input: [2])
       subject.run
-    end.to perform_under(0.7).sample(3).times
+    end.to perform_under(0.625).sample(5).times
   end
 end
