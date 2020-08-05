@@ -1,1 +1,0 @@
-# intcode_interview
