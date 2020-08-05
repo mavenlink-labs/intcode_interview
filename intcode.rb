@@ -37,8 +37,13 @@ class Intcode
       else
         raise ArgumentError, "unexpected opcode #{opcode}"
       end
+
+      advance_pointer unless JUMP_OPCODES.include? opcode
     end
   end
+
+  JUMP_OPCODES = [5, 6].freeze
+
 
   private
 
@@ -76,7 +81,6 @@ class Intcode
     b = get_param(right)
 
     set_memory_for_param(answer, yield(a, b))
-    advance_pointer
   end
 
   def get_param(mode)
@@ -116,13 +120,11 @@ class Intcode
 
     next_input = @input.shift
     set_memory_for_param(@instruction_params.first, next_input)
-    advance_pointer
   end
 
   def output_instruction
     output_value = get_param(@instruction_params.first)
     @output.push(output_value)
-    advance_pointer
   end
 
   def jump_if_true_instruction
@@ -150,7 +152,6 @@ class Intcode
   def adjust_relative_base_instruction
     adjust_by = get_param(@instruction_params.first)
     @relative_base += adjust_by
-    advance_pointer
   end
 
   def advance_pointer
