@@ -12,16 +12,16 @@ class Intcode
     loop do
       return @memory if @memory[@pointer] == 99
 
-      instruction = translate_instruction
-      case instruction[:opcode]
+      meta = translate_instruction
+      case meta[:opcode]
       when 1
-        add instruction
+        add_instruction meta
       when 2
-        multiply instruction
+        multiple_instruction meta
       when 3
-        use_input instruction
+        input_instruction meta
       when 4
-        append_output instruction
+        output_instruction meta
       else
         raise ArgumentError, 'unexpected opcode'
       end
@@ -41,19 +41,19 @@ class Intcode
     }
   end
 
-  def add(instruction)
-    operate(instruction) { |a, b| a + b }
+  def add_instruction(meta)
+    operate(meta) { |a, b| a + b }
   end
 
-  def multiply(instruction)
-    operate(instruction) { |a, b| a * b }
+  def multiple_instruction(meta)
+    operate(meta) { |a, b| a * b }
   end
 
-  def operate(instruction)
-    a = get_param(instruction[:param_1_mode])
-    b = get_param(instruction[:param_2_mode])
+  def operate(meta)
+    a = get_param(meta[:param_1_mode])
+    b = get_param(meta[:param_2_mode])
 
-    set_param(instruction[:param_3_mode], yield(a, b))
+    set_param(meta[:param_3_mode], yield(a, b))
     advance_pointer
   end
 
@@ -83,14 +83,14 @@ class Intcode
     end
   end
 
-  def use_input(instruction)
+  def input_instruction(meta)
     next_input = @input.shift
-    set_param(instruction[:param_1_mode], next_input)
+    set_param(meta[:param_1_mode], next_input)
     advance_pointer
   end
 
-  def append_output(instruction)
-    output_value = get_param(instruction[:param_1_mode])
+  def output_instruction(meta)
+    output_value = get_param(meta[:param_1_mode])
     @output.push(output_value)
     advance_pointer
   end
