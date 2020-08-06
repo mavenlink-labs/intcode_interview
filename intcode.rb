@@ -12,7 +12,7 @@ class Intcode
 
   def run
     loop do
-      return @memory.raw if @memory[@memory.pointer] == 99
+      return @memory.raw if @memory.at_pointer == 99
 
       read_instruction.execute
     end

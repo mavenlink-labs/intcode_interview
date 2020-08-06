@@ -17,7 +17,7 @@ class Memory
   end
 
   def at_pointer=(value)
-    self[@pointer] = value
+    self.at_pointer = value
   end
 
   def value_from_pointer
@@ -36,6 +36,8 @@ class Memory
     self[relative_base + at_pointer] = value
   end
 
+  private
+
   def [](index)
     reallocate(index) if index >= raw.length
 
@@ -47,8 +49,6 @@ class Memory
 
     raw[index] = value
   end
-
-  private
 
   def reallocate(next_requested_index)
     new_length = next_requested_index + 1
