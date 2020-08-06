@@ -37,7 +37,9 @@ class Intcode
             .new(@memory, param_1_mode, param_2_mode)
             .execute
       when 6
-        jump_if_false_instruction param_1_mode, param_2_mode
+        JumpIfFalseInstruction
+            .new(@memory, param_1_mode, param_2_mode)
+            .execute
       when 7
         less_than_instruction param_1_mode, param_2_mode, param_3_mode
       when 8
@@ -111,22 +113,6 @@ class Intcode
       @memory[@memory.relative_base + read_pointer] = new_value
     else
       raise ArgumentError, 'unknown parameter mode'
-    end
-  end
-
-  def jump_if_false_instruction(value_mode, param_mode)
-    jump_if_instruction(value_mode, param_mode, &:zero?)
-  end
-
-  def jump_if_instruction(value_mode, param_mode)
-    value = get_param(value_mode)
-
-    if yield value
-      @memory.pointer = get_param(param_mode)
-    else
-      # advance pointer once to move past param 2
-      # advance it again to move to the next instruction
-      @memory.advance_pointer(2)
     end
   end
 

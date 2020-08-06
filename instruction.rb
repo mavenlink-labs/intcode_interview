@@ -123,3 +123,9 @@ class JumpIfTrueInstruction < JumpInstruction
     jump_if { |v| !v.zero? }
   end
 end
+
+class JumpIfFalseInstruction < JumpInstruction
+  def execute
+    jump_if(&:zero?)
+  end
+end
