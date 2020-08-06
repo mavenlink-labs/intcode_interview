@@ -18,22 +18,24 @@ class Intcode
       case opcode
       when 1
         AddInstruction
-          .new(@memory, param_1_mode, param_2_mode, param_3_mode)
-          .execute
+            .new(@memory, param_1_mode, param_2_mode, param_3_mode)
+            .execute
       when 2
         MultiplyInstruction
-          .new(@memory, param_1_mode, param_2_mode, param_3_mode)
-          .execute
+            .new(@memory, param_1_mode, param_2_mode, param_3_mode)
+            .execute
       when 3
         InputInstruction
-          .new(@memory, @input, param_1_mode)
-          .execute
+            .new(@memory, @input, param_1_mode)
+            .execute
       when 4
         OutputInstruction
-          .new(@memory, @output, param_1_mode)
-          .execute
+            .new(@memory, @output, param_1_mode)
+            .execute
       when 5
-        jump_if_true_instruction param_1_mode, param_2_mode
+        JumpIfTrueInstruction
+            .new(@memory, param_1_mode, param_2_mode)
+            .execute
       when 6
         jump_if_false_instruction param_1_mode, param_2_mode
       when 7
@@ -110,10 +112,6 @@ class Intcode
     else
       raise ArgumentError, 'unknown parameter mode'
     end
-  end
-
-  def jump_if_true_instruction(value_mode, param_mode)
-    jump_if_instruction(value_mode, param_mode) { |v| !v.zero? }
   end
 
   def jump_if_false_instruction(value_mode, param_mode)

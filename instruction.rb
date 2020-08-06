@@ -99,7 +99,27 @@ class OutputInstruction < Instruction
 end
 
 class JumpInstruction < Instruction
+  def initialize(memory, value_mode, param_mode)
+    super(memory)
+    @value_mode = value_mode
+    @param_mode = param_mode
+  end
+
+  def jump_if
+    value = get_param(@value_mode)
+
+    if yield value
+      @memory.pointer = get_param(@param_mode)
+    else
+      # advance pointer once to move past param 2
+      # advance it again to move to the next instruction
+      @memory.advance_pointer(2)
+    end
+  end
 end
 
 class JumpIfTrueInstruction < JumpInstruction
+  def execute
+    jump_if { |v| !v.zero? }
+  end
 end
