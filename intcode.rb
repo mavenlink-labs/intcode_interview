@@ -41,9 +41,13 @@ class Intcode
             .new(@memory, param_1_mode, param_2_mode)
             .execute
       when 7
-        less_than_instruction param_1_mode, param_2_mode, param_3_mode
+        LessThanInstruction
+            .new(@memory, param_1_mode, param_2_mode, param_3_mode)
+            .execute
       when 8
-        equals_instruction param_1_mode, param_2_mode, param_3_mode
+        EqualsInstruction
+            .new(@memory, param_1_mode, param_2_mode, param_3_mode)
+            .execute
       when 9
         adjust_relative_base_instruction param_1_mode
       else
@@ -67,21 +71,6 @@ class Intcode
     param_3_mode = instruction_digits[0].to_i
 
     [opcode, param_1_mode, param_2_mode, param_3_mode]
-  end
-
-  def equals_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a == b ? 1 : 0 }
-  end
-
-  def less_than_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a < b ? 1 : 0 }
-  end
-
-  def operate(left, right, answer)
-    a = get_param(left)
-    b = get_param(right)
-
-    set_memory_for_param(answer, yield(a, b))
   end
 
   def get_param(mode)

@@ -70,6 +70,18 @@ class MultiplyInstruction < OperationInstruction
   end
 end
 
+class LessThanInstruction < OperationInstruction
+  def execute
+    operate { |a, b| a < b ? 1 : 0 }
+  end
+end
+
+class EqualsInstruction < OperationInstruction
+  def execute
+    operate { |a, b| a == b ? 1 : 0 }
+  end
+end
+
 class InputInstruction < Instruction
   def initialize(memory, input, param_mode)
     super(memory)
