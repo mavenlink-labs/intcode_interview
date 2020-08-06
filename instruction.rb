@@ -24,12 +24,11 @@ class Instruction
     @memory.advance_pointer
     case mode
     when 0
-      index = @memory.at_pointer
-      @memory[index] = new_value
+      @memory.value_from_pointer = new_value
     when 1
-      @memory[@memory.pointer] = new_value
+      @memory.at_pointer = new_value
     when 2
-      @memory[@memory.relative_base + @memory.at_pointer] = new_value
+      @memory.value_from_relative_base = new_value
     else
       raise ArgumentError, 'unknown parameter mode'
     end

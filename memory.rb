@@ -16,12 +16,24 @@ class Memory
     self[@pointer]
   end
 
+  def at_pointer=(value)
+    self[@pointer] = value
+  end
+
   def value_from_pointer
     self[at_pointer]
   end
 
+  def value_from_pointer=(value)
+    self[at_pointer] = value
+  end
+
   def value_from_relative_base
     self[relative_base + at_pointer]
+  end
+
+  def value_from_relative_base=(value)
+    self[relative_base + at_pointer] = value
   end
 
   def [](index)
