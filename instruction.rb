@@ -85,6 +85,19 @@ class InputInstruction < Instruction
   end
 end
 
+class OutputInstruction < Instruction
+  def initialize(memory, output, param_mode)
+    super(memory)
+    @output = output
+    @param_mode = param_mode
+  end
+
+  def execute
+    output_value = get_param(@param_mode)
+    @output.push(output_value)
+  end
+end
+
 class JumpInstruction < Instruction
 end
 

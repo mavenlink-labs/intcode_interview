@@ -26,10 +26,12 @@ class Intcode
           .execute
       when 3
         InputInstruction
-            .new(@memory, @input, param_1_mode)
-            .execute
+          .new(@memory, @input, param_1_mode)
+          .execute
       when 4
-        output_instruction param_1_mode
+        OutputInstruction
+          .new(@memory, @output, param_1_mode)
+          .execute
       when 5
         jump_if_true_instruction param_1_mode, param_2_mode
       when 6
@@ -108,11 +110,6 @@ class Intcode
     else
       raise ArgumentError, 'unknown parameter mode'
     end
-  end
-
-  def output_instruction(param_mode)
-    output_value = get_param(param_mode)
-    @output.push(output_value)
   end
 
   def jump_if_true_instruction(value_mode, param_mode)
