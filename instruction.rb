@@ -1,6 +1,4 @@
 class Instruction
-  attr_reader :memory
-
   def initialize(memory)
     @memory = memory
   end
@@ -41,20 +39,18 @@ class Instruction
 end
 
 class OperationInstruction < Instruction
-  attr_reader :left, :right, :answer
-
-  def initialize(memory, left, right, answer)
+  def initialize(memory, left_param_mode, right_param_mode, answer_param_mode)
     super(memory)
-    @left = left
-    @right = right
-    @answer = answer
+    @left_param_mode = left_param_mode
+    @right_param_mode = right_param_mode
+    @answer_param_mode = answer_param_mode
   end
 
   def operate
-    a = get_param(left)
-    b = get_param(right)
+    a = get_param(@left_param_mode)
+    b = get_param(@right_param_mode)
 
-    set_memory_for_param(answer, yield(a, b))
+    set_memory_for_param(@answer_param_mode, yield(a, b))
   end
 end
 
@@ -107,6 +103,18 @@ class OutputInstruction < Instruction
   def execute
     output_value = get_param(@param_mode)
     @output.push(output_value)
+  end
+end
+
+class AdjustRelativeBaseInstruction < Instruction
+  def initialize(memory, param_mode)
+    super(memory)
+    @param_mode = param_mode
+  end
+
+  def execute
+    adjust_by = get_param(@param_mode)
+    @memory.relative_base += adjust_by
   end
 end
 
