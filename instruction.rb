@@ -3,8 +3,6 @@ class Instruction
     @memory = memory
   end
 
-  def execute; end
-
   def get_param(mode)
     @memory.advance_pointer
 
@@ -51,6 +49,7 @@ class OperationInstruction < Instruction
     b = get_param(@right_param_mode)
 
     set_memory_for_param(@answer_param_mode, yield(a, b))
+    @memory.advance_pointer
   end
 end
 
@@ -90,6 +89,7 @@ class InputInstruction < Instruction
 
     next_input = @input.shift
     set_memory_for_param(@param_mode, next_input)
+    @memory.advance_pointer
   end
 end
 
@@ -103,6 +103,7 @@ class OutputInstruction < Instruction
   def execute
     output_value = get_param(@param_mode)
     @output.push(output_value)
+    @memory.advance_pointer
   end
 end
 
@@ -115,6 +116,7 @@ class AdjustRelativeBaseInstruction < Instruction
   def execute
     adjust_by = get_param(@param_mode)
     @memory.relative_base += adjust_by
+    @memory.advance_pointer
   end
 end
 
