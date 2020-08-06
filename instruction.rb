@@ -61,7 +61,12 @@ end
 class AddInstruction < OperationInstruction
   def execute
     operate { |a, b| a + b }
-    super
+  end
+end
+
+class MultiplyInstruction < OperationInstruction
+  def execute
+    operate { |a, b| a * b }
   end
 end
 

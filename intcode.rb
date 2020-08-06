@@ -21,7 +21,9 @@ class Intcode
           .new(@memory, param_1_mode, param_2_mode, param_3_mode)
           .execute
       when 2
-        multiple_instruction param_1_mode, param_2_mode, param_3_mode
+        MultiplyInstruction
+          .new(@memory, param_1_mode, param_2_mode, param_3_mode)
+          .execute
       when 3
         input_instruction param_1_mode
       when 4
@@ -57,14 +59,6 @@ class Intcode
     param_3_mode = instruction_digits[0].to_i
 
     [opcode, param_1_mode, param_2_mode, param_3_mode]
-  end
-
-  def add_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a + b }
-  end
-
-  def multiple_instruction(left, right, answer)
-    operate(left, right, answer) { |a, b| a * b }
   end
 
   def equals_instruction(left, right, answer)
