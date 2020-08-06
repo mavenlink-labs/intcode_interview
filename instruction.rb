@@ -70,6 +70,21 @@ class MultiplyInstruction < OperationInstruction
   end
 end
 
+class InputInstruction < Instruction
+  def initialize(memory, input, param_mode)
+    super(memory)
+    @input = input
+    @param_mode = param_mode
+  end
+
+  def execute
+    raise StandardError, 'no inputs available!!' if @input.empty?
+
+    next_input = @input.shift
+    set_memory_for_param(@param_mode, next_input)
+  end
+end
+
 class JumpInstruction < Instruction
 end
 

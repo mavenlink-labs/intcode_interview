@@ -25,7 +25,9 @@ class Intcode
           .new(@memory, param_1_mode, param_2_mode, param_3_mode)
           .execute
       when 3
-        input_instruction param_1_mode
+        InputInstruction
+            .new(@memory, @input, param_1_mode)
+            .execute
       when 4
         output_instruction param_1_mode
       when 5
@@ -106,13 +108,6 @@ class Intcode
     else
       raise ArgumentError, 'unknown parameter mode'
     end
-  end
-
-  def input_instruction(param_mode)
-    raise StandardError, 'no inputs available!!' if @input.empty?
-
-    next_input = @input.shift
-    set_memory_for_param(param_mode, next_input)
   end
 
   def output_instruction(param_mode)
