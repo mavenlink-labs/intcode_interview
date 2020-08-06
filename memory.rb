@@ -1,7 +1,27 @@
 class Memory
   attr_reader :raw
+  attr_accessor :pointer, :relative_base
+
   def initialize(initial_memory = [])
     @raw = initial_memory.dup
+    @pointer = 0
+    @relative_base = 0
+  end
+
+  def advance_pointer(by = 1)
+    @pointer += by
+  end
+
+  def at_pointer
+    self[@pointer]
+  end
+
+  def value_from_pointer
+    self[at_pointer]
+  end
+
+  def value_from_relative_base
+    self[relative_base + at_pointer]
   end
 
   def [](index)

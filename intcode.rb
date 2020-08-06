@@ -1,24 +1,25 @@
 require_relative 'memory'
+require_relative 'instruction'
 
 class Intcode
   attr_reader :output
 
   def initialize(memory, input: [])
     @memory = Memory.new(memory)
-    @pointer = 0
     @input = input.dup
     @output = []
-    @relative_base = 0
   end
 
   def run
     loop do
-      return @memory.raw if @memory[@pointer] == 99
+      return @memory.raw if @memory[@memory.pointer] == 99
 
       opcode, param_1_mode, param_2_mode, param_3_mode = translate_instruction
       case opcode
       when 1
-        add_instruction param_1_mode, param_2_mode, param_3_mode
+        AddInstruction
+          .new(@memory, param_1_mode, param_2_mode, param_3_mode)
+          .execute
       when 2
         multiple_instruction param_1_mode, param_2_mode, param_3_mode
       when 3
@@ -39,7 +40,7 @@ class Intcode
         raise ArgumentError, "unexpected opcode #{opcode}"
       end
 
-      advance_pointer unless JUMP_OPCODES.include? opcode
+      @memory.advance_pointer unless JUMP_OPCODES.include? opcode
     end
   end
 
@@ -82,7 +83,7 @@ class Intcode
   end
 
   def get_param(mode)
-    advance_pointer
+    @memory.advance_pointer
 
     case mode
     when 0
@@ -90,7 +91,7 @@ class Intcode
     when 1
       param = read_pointer
     when 2
-      param = @memory[@relative_base + read_pointer]
+      param = @memory[@memory.relative_base + read_pointer]
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -99,15 +100,15 @@ class Intcode
   end
 
   def set_memory_for_param(mode, new_value)
-    advance_pointer
+    @memory.advance_pointer
     case mode
     when 0
       index = read_pointer
       @memory[index] = new_value
     when 1
-      @memory[@pointer] = new_value
+      @memory[@memory.pointer] = new_value
     when 2
-      @memory[@relative_base + read_pointer] = new_value
+      @memory[@memory.relative_base + read_pointer] = new_value
     else
       raise ArgumentError, 'unknown parameter mode'
     end
@@ -137,25 +138,20 @@ class Intcode
     value = get_param(value_mode)
 
     if yield value
-      @pointer = get_param(param_mode)
+      @memory.pointer = get_param(param_mode)
     else
       # advance pointer once to move past param 2
-      advance_pointer
       # advance it again to move to the next instruction
-      advance_pointer
+      @memory.advance_pointer(2)
     end
   end
 
   def adjust_relative_base_instruction(param_mode)
     adjust_by = get_param(param_mode)
-    @relative_base += adjust_by
-  end
-
-  def advance_pointer
-    @pointer += 1
+    @memory.relative_base += adjust_by
   end
 
   def read_pointer
-    @memory[@pointer]
+    @memory[@memory.pointer]
   end
 end
