@@ -28,6 +28,6 @@ Here are some example programs that use these features:
 - `1102,34915192,34915192,7,4,7,99,0` should output a 16-digit number (1219070632396864)
 - `104,1125899906842624,99` should output the large number in the middle.
 
-**Finally**, to verify this is all functioning correctly, using the `memory` file in this directory, supply a single input - the value 1. This program will perform a series of checks on each opcode, output any opcodes (and the associated parameter modes) that seem to be functioning incorrectly, and end by outputting a single value.
+**Finally**, to verify this is all functioning correctly, using the initial memory from `memory_inputs/part_4`, supply a single input - the value `1`. This program will perform a series of checks on each opcode, output any opcodes (and the associated parameter modes) that seem to be functioning incorrectly, and end by outputting a single value.
 
-Once your Intcode computer is fully functional, there should only be a single output value. If the only output value provided is 3335138414, your Intcode computer is functioning perfectly.
+Once your Intcode computer is fully functional, there should only be a single output value. If the only output value provided is `3335138414`, your Intcode computer is functioning perfectly.

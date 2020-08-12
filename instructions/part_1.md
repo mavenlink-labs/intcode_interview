@@ -51,4 +51,4 @@ Here are the initial and final states of a few more small programs:
 - `2,4,4,5,99,0` becomes `2,4,4,5,99,9801` (`99 * 99 = 9801`),
 - `1,1,1,4,99,5,6,0,99` becomes `30,1,1,4,2,5,6,0,99`.
 
-Once this is all working, the next step is to enter the data from the `memory` file. To make sure the computer is all working correctly, after running the `memory` through the machine, the value in position `0` should be `4576384`.
+Once this is all working, the final step of this part is to enter the data from `memory_inputs/part_1` file. To make sure the computer is all working correctly, after running that initial memory through the machine, the value in position `0` should be `4576384`. If that is true, congratulations - your Intcode computer is off to a great start!
