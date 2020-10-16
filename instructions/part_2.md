@@ -10,9 +10,7 @@ It's time to upgrade the computer!
 
 Programs that use these instructions will come with documentation that explains what should be connected to the input and output. The program `3,0,4,0,99` outputs whatever it gets as input, then halts.
 
-**Some notes**:
 - It is important to remember that the instruction pointer should increase by **the number of values in the instruction** after the instruction finishes. Because of the new instructions, this amount is no longer always `4`.
-- Integers can be negative: `1101,100,-1,4,0` is a valid program (find `100 + -1`, store the result in position `4`).
 
 **Second**, you'll need to add support for **parameter modes**:
 
@@ -40,6 +38,8 @@ DE - two-digit opcode,      02 == opcode 2
 This instruction multiplies its first two parameters. The first parameter, `4` in position mode, works like it did before - its value is the value stored at address `4` (`33`). The second parameter, `3` in immediate mode, simply has value `3`. The result of this operation, `33 * 3 = 99`, is written according to the third parameter, `4` in position mode, which also works like it did before - `99` is written to address `4`.
 
 Parameters that an instruction writes to will **never be in immediate mode**.
+
+- Integers can be negative: `1101,100,-1,4,0` is a valid program (find `100 + -1`, store the result in position `4`).
 
 The diagnostic program we will use to calibrate these new codes will start by requesting from the user the ID of the system to test by running an **input** instruction - provide it with the value `1`.
 
