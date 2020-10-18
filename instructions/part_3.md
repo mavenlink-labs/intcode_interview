@@ -36,4 +36,4 @@ The above example program uses an input instruction to ask for a single number. 
 
 Re-run the same diagnostic test from the end of Part 2, however instead of `1` being the only input, supply it with `5`. This diagnostic test suite only outputs one number, the **diagnostic code**.
 
-If you got the number `935039`, this part of your computer is now configured correctly as well!
+If you got the number `918655`, this part of your computer is now configured correctly as well!
