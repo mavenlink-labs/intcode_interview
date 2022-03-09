@@ -25,4 +25,10 @@ describe IntcodeComputer do
 
     expect(IntcodeComputer.operate(instructions)).to eq [1,2,0,1]
   end
+
+  it "supports opcode 2" do
+    instructions = [2, 0, 0, 1]
+
+    expect(IntcodeComputer.operate(instructions)).to eq [2,4,0,1]
+  end
 end
