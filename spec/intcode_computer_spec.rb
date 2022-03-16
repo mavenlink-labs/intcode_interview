@@ -21,14 +21,20 @@ describe IntcodeComputer do
   end
 
   it "supports opcode 1" do
-    instructions = [1, 0, 0, 1]
+    instructions = [1, 0, 0, 1, 99]
 
-    expect(IntcodeComputer.operate(instructions)).to eq [1,2,0,1]
+    expect(IntcodeComputer.operate(instructions)).to eq [1,2,0,1,99]
   end
 
   it "supports opcode 2" do
-    instructions = [2, 0, 0, 1]
+    instructions = [2, 0, 0, 1,99]
 
-    expect(IntcodeComputer.operate(instructions)).to eq [2,4,0,1]
+    expect(IntcodeComputer.operate(instructions)).to eq [2,4,0,1,99]
+  end
+
+  it "supports multiple additions" do
+    instructions = [1, 0, 0, 1, 1, 0, 1, 2, 99]
+
+    expect(IntcodeComputer.operate(instructions)).to eq [1, 2, 3, 1, 1, 0, 1, 2, 99]
   end
 end
