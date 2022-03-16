@@ -32,6 +32,13 @@ describe IntcodeComputer do
     expect(IntcodeComputer.operate(instructions)).to eq [2,4,0,1,99]
   end
 
+  it "supports opcode 3" do
+    instructions = [3, 0, 99]
+    input = [1]
+
+    expect(IntcodeComputer.operate(instructions, input)).to eq [1, 0, 99]
+  end
+
   it "supports multiple additions" do
     instructions = [1, 0, 0, 1, 1, 0, 1, 2, 99]
 
