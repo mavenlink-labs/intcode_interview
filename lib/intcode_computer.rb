@@ -5,12 +5,10 @@ class IntcodeComputer
   INSTRUCTION_WIDTH = 4
 
   def self.operate(instructions)
-    raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(instructions.first)
     pointer = 0
-    opcode = instructions.first
 
-    while opcode != 99
-      opcode = instructions[pointer]
+    while (opcode = instructions[pointer]) != 99
+      raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(opcode)
 
       if opcode == 1
         pointer_1 = instructions[1 + pointer]

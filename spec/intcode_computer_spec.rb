@@ -37,4 +37,10 @@ describe IntcodeComputer do
 
     expect(IntcodeComputer.operate(instructions)).to eq [1, 2, 3, 1, 1, 0, 1, 2, 99]
   end
+
+  it "it handles unsupported opcodes in insturctions" do
+    instructions = [1, 0, 0, 1, 98]
+
+    expect{ IntcodeComputer.operate(instructions) }.to raise_error IntcodeComputer::UnsupportedOpCode
+  end
 end
