@@ -5,6 +5,7 @@ class IntcodeComputer
   INSTRUCTION_WIDTH = 4
 
   def self.operate(instructions:, input: [], output: [])
+    input = input.reverse
     pointer = 0
 
     while (opcode = instructions[pointer]) != 99
@@ -108,7 +109,7 @@ end
 
 class Read < Instruction
   def execute
-    write(input.shift)
+    write(input.pop)
   end
 
   def width
@@ -118,7 +119,7 @@ end
 
 class Write < Instruction
   def execute
-    output << l_val
+    output.push(l_val)
   end
 
   def width
