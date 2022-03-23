@@ -10,14 +10,9 @@ class IntcodeComputer
     while (opcode = instructions[pointer]) != 99
       raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(opcode)
 
-      instruction = InstructionFactory.build(pointer: pointer, instructions: instructions)
+      instruction = InstructionFactory.build(pointer: pointer, instructions: instructions, input: input)
 
       instruction.execute
-
-      if opcode == 3
-        instruction.change_witdh
-        result = input.pop
-      end
 
       pointer += instruction.width
     end
@@ -27,13 +22,15 @@ class IntcodeComputer
 end
 
 module InstructionFactory
-  def self.build(pointer:, instructions:)
+  def self.build(pointer:, instructions:, input:[])
     opcode = instructions[pointer]
     case opcode
     when 1
       Addition.new(pointer: pointer, instructions: instructions)
     when 2
       Multiplication.new(pointer: pointer, instructions: instructions)
+    when 3
+      Read.new(pointer: pointer, instructions: instructions, input: input)
     else
       Instruction.new(pointer: pointer, instructions: instructions)
     end
@@ -41,16 +38,17 @@ module InstructionFactory
 end
 
 class Instruction
-  attr_reader :l_pointer, :r_pointer, :l_val, :r_val
+  attr_reader :l_pointer, :r_pointer, :l_val, :r_val, :input
 
-  def initialize(pointer:, instructions:)
+  def initialize(pointer:, instructions:, input: [])
     @pointer = pointer
     @l_pointer = instructions[1 + pointer]
     @r_pointer = instructions[2 + pointer]
     @l_val = instructions[@l_pointer]
     @r_val = instructions[@r_pointer]
-    @write_pointer = instructions[pointer + 3]
+    @write_pointer = instructions[pointer + width - 1]
     @instructions = instructions
+    @input = input
   end
 
   def write(val)
@@ -91,5 +89,15 @@ class Multiplication < Instruction
 
   def width
     4
+  end
+end
+
+class Read < Instruction
+  def execute
+    write(input.pop)
+  end
+
+  def width
+    2
   end
 end
