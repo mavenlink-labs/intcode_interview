@@ -38,15 +38,10 @@ module InstructionFactory
 end
 
 class Instruction
-  attr_reader :l_pointer, :r_pointer, :l_val, :r_val, :input
+  attr_reader :input
 
   def initialize(pointer:, instructions:, input: [])
     @pointer = pointer
-    @l_pointer = instructions[1 + pointer]
-    @r_pointer = instructions[2 + pointer]
-    @l_val = instructions[@l_pointer]
-    @r_val = instructions[@r_pointer]
-    @write_pointer = instructions[pointer + width - 1]
     @instructions = instructions
     @input = input
   end
@@ -55,8 +50,24 @@ class Instruction
     instructions[write_pointer] = val
   end
 
-  def change_witdh
-    @write_pointer = instructions[@pointer + 1]
+  def write_pointer
+    instructions[pointer + width - 1]
+  end
+
+  def l_pointer
+    instructions[1 + pointer]
+  end
+
+  def l_val
+    instructions[l_pointer]
+  end
+
+  def r_pointer
+    instructions[2 + pointer]
+  end
+
+  def r_val
+    instructions[r_pointer]
   end
 
   def execute
@@ -69,7 +80,7 @@ class Instruction
 
   private
 
-  attr_reader :instructions, :write_pointer
+  attr_reader :instructions, :pointer
 end
 
 class Addition < Instruction
