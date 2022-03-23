@@ -10,27 +10,33 @@ class IntcodeComputer
     while (opcode = instructions[pointer]) != 99
       raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(opcode)
 
-      instruction = Instruction.new(pointer: pointer, instructions: instructions)
+      instruction = InstructionFactory.build(pointer: pointer, instructions: instructions)
 
-      if opcode == 1
-        result = instruction.l_val + instruction.r_val
-      end
-
-      if opcode == 2
-        result = instruction.l_val * instruction.r_val
-      end
+      instruction.execute
 
       if opcode == 3
         instruction.change_witdh
         result = input.pop
       end
 
-      instruction.write(result)
-
-      pointer += INSTRUCTION_WIDTH
+      pointer += instruction.width
     end
 
     instructions
+  end
+end
+
+module InstructionFactory
+  def self.build(pointer:, instructions:)
+    opcode = instructions[pointer]
+    case opcode
+    when 1
+      Addition.new(pointer: pointer, instructions: instructions)
+    when 2
+      Multiplication.new(pointer: pointer, instructions: instructions)
+    else
+      Instruction.new(pointer: pointer, instructions: instructions)
+    end
   end
 end
 
@@ -55,7 +61,35 @@ class Instruction
     @write_pointer = instructions[@pointer + 1]
   end
 
+  def execute
+    raise NotImplementedError, "You must implement execute in your subclass"
+  end
+
+  def width
+    raise NotImplementedError, "You must implement width in your subclass"
+  end
+
   private
 
   attr_reader :instructions, :write_pointer
+end
+
+class Addition < Instruction
+  def execute
+    write(l_val + r_val)
+  end
+
+  def width
+    4
+  end
+end
+
+class Multiplication < Instruction
+  def execute
+    write(l_val * r_val)
+  end
+
+  def width
+    4
+  end
 end
