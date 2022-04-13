@@ -8,7 +8,7 @@ describe IntcodeComputer do
   end
 
   it 'crashes on unexpected opcodes' do
-    instructions = [101]
+    instructions = [98]
     expect {
       IntcodeComputer.operate(instructions: instructions)
     }.to raise_error IntcodeComputer::UnsupportedOpCode
@@ -47,7 +47,7 @@ describe IntcodeComputer do
     expect(output).to eq [99]
   end
 
-  it "supprots immediate mode" do
+  it "supports immediate mode" do
     instructions = [11101, 5, 6, 3, 99]
     expected_output = [11101, 5, 6, 11, 99]
 

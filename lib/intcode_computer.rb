@@ -6,20 +6,43 @@ class IntcodeComputer
 
   def self.operate(instructions:, input: [], output: [])
     input = input.reverse
-    pointer = 0
 
-    while (opcode = (instructions[pointer] % 100)) != 99
-      raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(opcode)
+    ticker = InstructionTicker.new(instructions)
+    while ticker.has_next?
+      raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(ticker.current_opcode)
 
-      instruction = InstructionFactory.build(pointer: pointer, instructions: instructions, input: input, output: output)
+      instruction = InstructionFactory.build(pointer: ticker.pointer, instructions: instructions, input: input, output: output)
 
       instruction.execute
 
-      pointer += instruction.width
+      ticker.tick!(instruction.width)
     end
 
     instructions
   end
+end
+
+class InstructionTicker
+  attr_reader :instructions, :pointer
+  def initialize(instructions)
+    @instructions = instructions
+    @pointer = 0
+  end
+
+  def has_next?
+    current_opcode != 99
+  end
+
+  def current_opcode
+    instructions[pointer] % 100
+  end
+
+  def tick!(width)
+    self.pointer += width
+  end
+
+  private
+  attr_writer :pointer
 end
 
 module InstructionFactory
