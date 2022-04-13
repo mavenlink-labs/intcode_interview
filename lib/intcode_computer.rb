@@ -20,6 +20,13 @@ class IntcodeComputer
 
     instructions
   end
+
+  def self.extract_mode(value)
+    digits = (value/100).digits
+    [0,0,0].map.with_index do |value, index|
+      digits[index] || value
+    end
+  end
 end
 
 class InstructionTicker
