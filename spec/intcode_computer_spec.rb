@@ -47,6 +47,13 @@ describe IntcodeComputer do
     expect(output).to eq [99]
   end
 
+  it "supprots immediate mode" do
+    instructions = [11101, 5, 6, 3, 99]
+    expected_output = [11101, 5, 6, 11, 99]
+
+    expect(IntcodeComputer.operate(instructions: instructions)).to eq expected_output
+  end
+
   it "supports multiple additions" do
     instructions = [1, 0, 0, 1, 1, 0, 1, 2, 99]
 

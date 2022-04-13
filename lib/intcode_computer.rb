@@ -8,7 +8,7 @@ class IntcodeComputer
     input = input.reverse
     pointer = 0
 
-    while (opcode = instructions[pointer]) != 99
+    while (opcode = (instructions[pointer] % 100)) != 99
       raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(opcode)
 
       instruction = InstructionFactory.build(pointer: pointer, instructions: instructions, input: input, output: output)
