@@ -53,7 +53,7 @@ end
 
 module InstructionFactory
   def self.build(pointer:, instructions:, input:[], output: [])
-    opcode = instructions[pointer]
+    opcode = instructions[pointer] % 100
     case opcode
     when 1
       Addition.new(pointer: pointer, instructions: instructions)

@@ -54,6 +54,11 @@ describe IntcodeComputer do
     expect(IntcodeComputer.operate(instructions: instructions)).to eq expected_output
   end
 
+  it "has a mode" do
+    expect(IntcodeComputer.extract_mode(12301)).to eq [3,2,1]
+    expect(IntcodeComputer.extract_mode(01)).to eq [0,0,0]
+  end
+
   it "supports multiple additions" do
     instructions = [1, 0, 0, 1, 1, 0, 1, 2, 99]
 
