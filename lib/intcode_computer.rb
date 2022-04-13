@@ -7,11 +7,11 @@ class IntcodeComputer
   def self.operate(instructions:, input: [], output: [])
     input = input.reverse
 
-    ticker = InstructionTicker.new(instructions)
+    ticker = InstructionTicker.new(instructions, input, output)
     while ticker.has_next?
       raise UnsupportedOpCode, 'Unexpected item in the bagging area' unless SUPPORTED_OPCODES.include?(ticker.current_opcode)
 
-      instruction = InstructionFactory.build(pointer: ticker.pointer, instructions: instructions, input: input, output: output)
+      instruction = ticker.next_instruction
 
       instruction.execute
 
@@ -23,10 +23,12 @@ class IntcodeComputer
 end
 
 class InstructionTicker
-  attr_reader :instructions, :pointer
-  def initialize(instructions)
+  attr_reader :instructions, :pointer, :input, :output
+  def initialize(instructions, input, output)
     @instructions = instructions
     @pointer = 0
+    @output = output
+    @input = input
   end
 
   def has_next?
@@ -39,6 +41,10 @@ class InstructionTicker
 
   def tick!(width)
     self.pointer += width
+  end
+
+  def next_instruction
+    InstructionFactory.build(pointer: pointer, instructions: instructions, input: input, output: output)
   end
 
   private
